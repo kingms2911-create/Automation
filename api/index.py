@@ -5,7 +5,7 @@ import urllib.error
 from http.server import BaseHTTPRequestHandler
 
 TELEGRAM_BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN")
-# Hardcoded API key to ensure zero environment variable missing issues
+# Aap inme se koi bhi apni active key use kar sakte ho (jaise Default key ya automation wali)
 OPENROUTER_API_KEY = "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"
 TAVILY_API_KEY = os.environ.get("TAVILY_API_KEY")
 
@@ -44,7 +44,6 @@ def search_tavily(query):
 def ask_openrouter(prompt):
     url = "https://openrouter.ai/api/v1/chat/completions"
     
-    # Explicit headers with exact formatting
     headers = {
         "Authorization": f"Bearer {OPENROUTER_API_KEY.strip()}",
         "Content-Type": "application/json",
@@ -53,14 +52,14 @@ def ask_openrouter(prompt):
     }
     
     payload = {
-        "model": "deepseek/deepseek-chat",
+        # Free model use kar rahe hain taaki zero balance error na aaye
+        "model": "deepseek/deepseek-r1:free",
         "messages": [
             {"role": "user", "content": prompt}
         ]
     }
     
     data_bytes = json.dumps(payload).encode('utf-8')
-    
     req = urllib.request.Request(url, data=data_bytes, headers=headers, method="POST")
     
     try:
@@ -84,7 +83,7 @@ class handler(BaseHTTPRequestHandler):
         self.send_response(200)
         self.send_header('Content-type', 'text/plain')
         self.end_headers()
-        self.wfile.write("Level 6 Autonomous AI Engine (OpenRouter Fixed) is Active!".encode('utf-8'))
+        self.wfile.write("Level 6 Autonomous AI Engine is Active!".encode('utf-8'))
 
     def do_POST(self):
         try:
@@ -99,7 +98,7 @@ class handler(BaseHTTPRequestHandler):
 
                 if text.startswith("/start"):
                     reply = (
-                        "🔥 *Level 6 Autonomous AI Engine (OpenRouter) ONLINE!*\n\n"
+                        "🔥 *Level 6 Autonomous AI Engine ONLINE!*\n\n"
                         "Available commands:\n"
                         "👉 `/board [topic]` - AI Boardroom Strategy\n"
                         "👉 `/lead [query]` - Tavily Lead Generation\n"
