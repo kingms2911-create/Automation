@@ -46,8 +46,8 @@ def ask_gemini(prompt):
     if not GEMINI_API_KEY:
         return "Gemini API key not configured."
     
-    # Direct Gemini REST API endpoint
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={GEMINI_API_KEY}"
+    # Switched to gemini-pro endpoint
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key={GEMINI_API_KEY}"
     headers = {'Content-Type': 'application/json'}
     payload = {
         "contents": [{
@@ -59,7 +59,6 @@ def ask_gemini(prompt):
         response = requests.post(url, headers=headers, json=payload, timeout=15)
         res_data = response.json()
         
-        # Check response structure
         if "candidates" in res_data and len(res_data["candidates"]) > 0:
             text = res_data["candidates"][0]["content"]["parts"][0]["text"]
             return text
@@ -72,7 +71,7 @@ def ask_gemini(prompt):
         return f"Request Error: {e}"
 
 class handler(BaseHTTPRequestHandler):
-    def do_GET(self):
+    def do_GET(self->None):
         self.send_response(200)
         self.send_header('Content-type', 'text/plain')
         self.end_headers()
