@@ -5,7 +5,8 @@ import urllib.error
 from http.server import BaseHTTPRequestHandler
 
 TELEGRAM_BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN")
-OPENROUTER_API_KEY = os.environ.get("GEMINI_API_KEY") # Yahan apni OpenRouter API Key daal dena ya environment variable set kar lena
+# Direct hardcoded key to completely bypass Vercel environment variable mismatch issues
+OPENROUTER_API_KEY = "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"
 TAVILY_API_KEY = os.environ.get("TAVILY_API_KEY")
 
 def send_telegram_message(chat_id, text):
@@ -41,9 +42,6 @@ def search_tavily(query):
         return f"Search error: {e}"
 
 def ask_openrouter(prompt):
-    if not OPENROUTER_API_KEY:
-        return "OpenRouter API key not configured."
-    
     url = "https://openrouter.ai/api/v1/chat/completions"
     headers = {
         "Authorization": f"Bearer {OPENROUTER_API_KEY}",
@@ -53,7 +51,7 @@ def ask_openrouter(prompt):
     }
     
     payload = json.dumps({
-        "model": "deepseek/deepseek-chat", # Fast, reliable, and smooth model on OpenRouter
+        "model": "deepseek/deepseek-chat",
         "messages": [
             {"role": "user", "content": prompt}
         ]
