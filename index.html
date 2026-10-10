@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Level 6 Autonomous AI Engine</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+</head>
+<body class="bg-gray-900 text-white min-h-screen p-6">
+    <div class="max-w-4xl mx-auto space-y-6">
+        <header class="border-b border-gray-800 pb-4">
+            <h1 class="text-3xl font-bold text-indigo-400">Level 6 Autonomous AI Engine</h1>
+            <p class="text-gray-400">Multi-Agent System, Auto-Blogging & B2B Lead Scraping</p>
+        </header>
+
+        <main class="grid md:grid-cols-2 gap-6">
+            <div class="bg-gray-800 p-6 rounded-lg border border-gray-700">
+                <h2 class="text-xl font-semibold mb-3">Upgrade to Pro Subscription</h2>
+                <p class="text-gray-400 mb-4">Unlock 100+ AI Agents, Automated Lead Scraping, and Unlimited Auto-Blogging.</p>
+                <button onclick="payNow()" class="w-full bg-indigo-600 hover:bg-indigo-500 py-2 rounded-lg font-semibold">Subscribe Now</button>
+            </div>
+
+            <div class="bg-gray-800 p-6 rounded-lg border border-gray-700">
+                <h2 class="text-xl font-semibold mb-3">Telegram Control Bot</h2>
+                <p class="text-gray-400 mb-4">Execute /blog, /board, /lead, /app, and /reel commands live from Telegram.</p>
+                <a href="https://t.me/BotFather" target="_blank" class="block text-center bg-gray-700 hover:bg-gray-600 py-2 rounded-lg font-semibold">Open Telegram Bot</a>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        function payNow() {
+            var options = {
+                "key": "YOUR_RAZORPAY_KEY_ID",
+                "amount": "99900", // Amount in paise (₹999)
+                "currency": "INR",
+                "name": "Level 6 AI Engine Pro",
+                "description": "Monthly Subscription",
+                "handler": function (response){
+                    alert("Payment Successful! Payment ID: " + response.razorpay_payment_id);
+                }
+            };
+            var rzp = new Razorpay(options);
+            rzp.open();
+        }
+    </script>
+</body>
+</html>
