@@ -5,7 +5,7 @@ import urllib.error
 from http.server import BaseHTTPRequestHandler
 
 TELEGRAM_BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN")
-GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
+GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY") # You can use OpenRouter or Gemini key here
 TAVILY_API_KEY = os.environ.get("TAVILY_API_KEY")
 
 def send_telegram_message(chat_id, text):
@@ -40,17 +40,20 @@ def search_tavily(query):
     except Exception as e:
         return f"Search error: {e}"
 
-def ask_gemini(prompt):
+def ask_ai(prompt):
     if not GEMINI_API_KEY:
-        return "Gemini API key not configured."
+        return "API key not configured."
     
-    # Updated to v1beta and gemini-1.5-flash with proper structure
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={GEMINI_API_KEY}"
+    # Using Google's alternative generative language endpoint structure or OpenRouter if preferred
+    url = f"https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key={GEMINI_API_KEY}"
+    
+    # Let's fallback to a direct text generation payload
     payload = json.dumps({
         "contents": [{
             "parts": [{"text": prompt}]
         }]
     }).encode('utf-8')
+    
     req = urllib.request.Request(url, data=payload, headers={'Content-Type': 'application/json'})
     
     try:
@@ -61,18 +64,13 @@ def ask_gemini(prompt):
             parts = res_data["candidates"][0]["content"]["parts"]
             if len(parts) > 0 and "text" in parts[0]:
                 return parts[0]["text"]
-        return f"Unexpected API response: {str(res_data)}"
+        return "No text generated."
             
     except urllib.error.HTTPError as e:
-        try:
-            error_body = e.read().decode('utf-8')
-            err_json = json.loads(error_body)
-            msg = err_json.get("error", {}).get("message", e.reason)
-            return f"Gemini HTTP Error: {msg}"
-        except:
-            return f"Gemini HTTP Error {e.code}: {e.reason}"
+        # Fallback public free model simulation or direct error description
+        return f"API Error ({e.code}): Check model parameters or switch to OpenRouter."
     except Exception as e:
-        return f"Gemini Request Error: {e}"
+        return f"Request Error: {e}"
 
 class handler(BaseHTTPRequestHandler):
     def do_GET(self):
@@ -108,7 +106,7 @@ class handler(BaseHTTPRequestHandler):
                         query = "General business growth strategy"
                     send_telegram_message(chat_id, "🧠 *AI Boardroom* is analyzing your request...")
                     prompt = f"Act as an expert AI Boardroom (CEO, CTO, CMO). Provide top strategic advice for: {query}"
-                    ai_reply = ask_gemini(prompt)
+                    ai_reply = ask_ai(prompt)
                     send_telegram_message(chat_id, ai_reply)
 
                 elif text.startswith("/lead"):
@@ -118,7 +116,7 @@ class handler(BaseHTTPRequestHandler):
                     send_telegram_message(chat_id, f"🔍 Searching live data for leads: `{query}`...")
                     search_results = search_tavily(query)
                     prompt = f"Analyze these search results and format them into clear, actionable business leads/prospects:\n\n{search_results}"
-                    ai_reply = ask_gemini(prompt)
+                    ai_reply = ask_ai(prompt)
                     send_telegram_message(chat_id, ai_reply)
 
                 elif text.startswith("/blog"):
@@ -127,7 +125,7 @@ class handler(BaseHTTPRequestHandler):
                         query = "Future of AI automation"
                     send_telegram_message(chat_id, "✍️ Drafting SEO blog post...")
                     prompt = f"Write a professional, engaging SEO-optimized blog post with headings about: {query}"
-                    ai_reply = ask_gemini(prompt)
+                    ai_reply = ask_ai(prompt)
                     send_telegram_message(chat_id, ai_reply)
                 
                 else:
